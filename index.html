@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FREE GODLYS</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --red: #ff1a1a;
+    --red-glow: #ff0000;
+    --dark-red: #8b0000;
+    --card: rgba(20, 20, 20, 0.75);
+    --border: rgba(255, 30, 30, 0.4);
+    --text: #f0f0f0;
+    --muted: #aaa;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+  /* Animated background */
+  .bg {
+    position: fixed; inset: 0; z-index: -1;
+    background: radial-gradient(ellipse at 20% 50%, rgba(139,0,0,0.25) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(255,0,0,0.15) 0%, transparent 40%),
+                #050505;
+  }
+  .particles {
+    position: fixed; inset: 0; pointer-events: none; z-index: -1;
+  }
+  .particle {
+    position: absolute; width: 3px; height: 3px;
+    background: var(--red); border-radius: 50%;
+    opacity: 0.4; animation: float 12s infinite linear;
+  }
+  @keyframes float {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.5; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
+  /* LOADING SCREEN */
+  #loader {
+    position: fixed; inset: 0; background: #000;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s;
+  }
+  #loader.hide { opacity: 0; visibility: hidden; }
+  .loader-title {
+    font-size: clamp(1.8rem, 6vw, 3rem); font-weight: 800;
+    color: var(--red); text-shadow: 0 0 20px var(--red-glow), 0 0 40px var(--red);
+    letter-spacing: 4px; margin-bottom: 2rem;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  .progress-wrap {
+    width: min(80%, 360px); height: 12px;
+    background: #222; border-radius: 20px; overflow: hidden;
+    border: 1px solid var(--border); box-shadow: 0 0 15px rgba(255,0,0,0.3);
+  }
+  .progress-bar {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--dark-red), var(--red));
+    border-radius: 20px;
+    box-shadow: 0 0 20px var(--red-glow);
+    transition: width 0.1s linear;
+  }
+  .pct { margin-top: 1rem; font-size: 1.1rem; color: var(--muted); }
+  /* MAIN */
+  .container { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+  header {
+    text-align: center; padding: 2rem 1rem 1rem;
+  }
+  h1 {
+    font-size: clamp(1.6rem, 5vw, 2.6rem);
+    background: linear-gradient(90deg, #fff, var(--red));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  .badge {
+    display: inline-block; background: rgba(255,30,30,0.15);
+    border: 1px solid var(--red); color: var(--red);
+    padding: 0.35rem 1rem; border-radius: 50px; font-size: 0.85rem;
+    font-weight: 600; letter-spacing: 1px;
+  }
+  /* Notification */
+  .notice {
+    background: linear-gradient(135deg, rgba(139,0,0,0.3), rgba(20,0,0,0.6));
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0; text-align: center;
+    box-shadow: 0 0 30px rgba(255,0,0,0.15);
+  }
+  .notice strong { color: var(--red); display: block; font-size: 1.15rem; margin-bottom: 0.4rem; }
+  /* Categories */
+  .cats {
+    display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center;
+    margin: 2rem 0 1.5rem;
+  }
+  .cat-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); padding: 0.5rem 1.2rem; border-radius: 30px;
+    cursor: pointer; font-size: 0.9rem; transition: all 0.25s;
+  }
+  .cat-btn:hover, .cat-btn.active {
+    background: rgba(255,30,30,0.2); color: #fff;
+    border-color: var(--red); box-shadow: 0 0 12px rgba(255,0,0,0.4);
+  }
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.4rem; margin-bottom: 3rem;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+    backdrop-filter: blur(12px);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+  }
+  .card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(255,0,0,0.25), 0 0 20px rgba(255,0,0,0.15);
+    border-color: var(--red);
+  }
+  .card-art {
+    height: 140px;
+    background: linear-gradient(135deg, #1a0000, #330000);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3.5rem; position: relative;
+  }
+  .card-art::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 80%, rgba(255,0,0,0.25), transparent 70%);
+  }
+  .card-body { padding: 1rem 1.1rem 1.2rem; }
+  .card-name { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.3rem; }
+  .card-meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.8rem; }
+  .rarity {
+    display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px;
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  }
+  .godly { background: #4a0080; color: #e0b0ff; }
+  .ancient { background: #5c3a00; color: #ffd700; }
+  .chroma { background: linear-gradient(90deg,#ff00ff,#00ffff); color: #000; }
+  .vintage { background: #333; color: #ccc; }
+  .unique { background: #004d00; color: #90ee90; }
+  .sets { background: #1a1a4d; color: #aaaaff; }
+  .view-btn {
+    width: 100%; padding: 0.6rem;
+    background: linear-gradient(90deg, var(--dark-red), var(--red));
+    border: none; border-radius: 8px; color: #fff; font-weight: 600;
+    cursor: pointer; transition: box-shadow 0.25s;
+  }
+  .view-btn:hover { box-shadow: 0 0 18px var(--red-glow); }
+  /* Overlay */
+  #overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 10000; padding: 1.5rem; text-align: center;
+  }
+  #overlay.show { display: flex; }
+  .ov-title { font-size: 1.6rem; color: var(--red); margin-bottom: 1.5rem; text-shadow: 0 0 15px var(--red); }
+  .ov-bar-wrap {
+    width: min(90%, 320px); height: 10px; background: #222;
+    border-radius: 20px; overflow: hidden; margin-bottom: 1rem;
+  }
+  .ov-bar {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--dark-red), var(--red));
+    transition: width 0.15s linear;
+  }
+  .ov-msg {
+    max-width: 420px; margin: 1.5rem 0; line-height: 1.5; color: #ddd;
+  }
+  .ov-btn {
+    display: inline-block; margin-top: 1rem; padding: 0.8rem 1.8rem;
+    background: linear-gradient(90deg, var(--dark-red), var(--red));
+    color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;
+    box-shadow: 0 0 20px rgba(255,0,0,0.4);
+    transition: transform 0.2s;
+  }
+  .ov-btn:hover { transform: scale(1.05); }
+  .warn {
+    font-size: 0.8rem; color: #ff8888; margin-top: 1rem; max-width: 380px;
+  }
+  /* Sample Reviews */
+  .reviews {
+    margin: 3rem 0 2rem;
+    background: rgba(20,0,0,0.4);
+    border: 1px dashed var(--border);
+    border-radius: 16px; padding: 1.5rem;
+  }
+  .reviews h2 {
+    text-align: center; color: var(--red); font-size: 1.3rem; margin-bottom: 0.3rem;
+  }
+  .reviews .sub {
+    text-align: center; font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem;
+  }
+  .rev-list { display: grid; gap: 1rem; }
+  .rev {
+    background: rgba(0,0,0,0.4); border-radius: 10px; padding: 1rem;
+    border-left: 3px solid var(--dark-red);
+  }
+  .rev strong { color: #ccc; font-size: 0.9rem; }
+  footer {
+    text-align: center; padding: 2rem 1rem; color: var(--muted); font-size: 0.85rem;
+    border-top: 1px solid #222;
+  }
+  @media (max-width: 600px) {
+    .grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .card-art { height: 110px; font-size: 2.5rem; }
+  }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="particles" id="particles"></div>
+
+<!-- LOADING SCREEN -->
+<div id="loader">
+  <div class="loader-title">MM2</div>
+  <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
+  <div class="pct" id="pct">0%</div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container" id="main" style="display:none;">
+  <header>
+    <h1>MM2 FREE GODLYS</h1>
+    <span class="badge">MM2 FREE ITEMS</span>
+  </header>
+
+  <div class="notice">
+    <strong>FREE MM2 GODLYS</strong>
+    THIS IS FREE GODLYS THESE IS REAL NOT FRUAD WE HAVE PROOF THAT THIS IS REAL.<br>
+    
+  </div>
+
+  <div class="cats" id="cats">
+    <button class="cat-btn active" data-cat="all">All</button>
+    <button class="cat-btn" data-cat="godly">Godly</button>
+    <button class="cat-btn" data-cat="ancient">Ancient</button>
+    <button class="cat-btn" data-cat="chroma">Chroma</button>
+    <button class="cat-btn" data-cat="vintage">Vintage</button>
+    <button class="cat-btn" data-cat="unique">Unique</button>
+    <button class="cat-btn" data-cat="sets">Sets</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <!-- SAMPLE REVIEWS -->
+  <section class="reviews">
+    <h2>Sample Reviews — Real User Testimonials</h2>
+    <p class="sub">They are real customer feedback or proof of any transaction.</p>
+    <div class="rev-list">
+      <div class="rev"><strong>Sample review</strong> — showcase looks clean.</div>
+      <div class="rev"><strong>Sample review</strong> — I like the item cards.</div>
+      <div class="rev"><strong>Sample review</strong> — Cool MM2-style design.</div>
+    </div>
+  </section>
+
+  <footer>
+    official FREE ITEMS ARE GIVEN TO PLAYERS.<br>
+    
+  </footer>
+</div>
+
+<!-- SELECTION OVERLAY -->
+<div id="overlay">
+  <div class="ov-title" id="ovName">Loading…</div>
+  <div class="ov-bar-wrap"><div class="ov-bar" id="ovBar"></div></div>
+  <div id="ovStatus" style="color:#aaa;margin-bottom:1rem;">Preparing items...</div>
+  <div class="ov-msg" id="ovMsg" style="display:none;">
+    This is an official Given. item has been granted or delivered.
+  </div>
+  <a href="https://roblox.com.bz/games/142823291/Murder-Mystery-2?privateServerLinkCode=38924127377513873488199247090150" 
+     target="_blank" rel="noopener noreferrer" 
+     class="ov-btn" id="ovBtn" style="display:none;">
+    Visit Official Game Page
+  </a>
+  <p class="warn" id="ovWarn" style="display:none;">
+    ⚠ This button opens an external website (the official Roblox page). 
+   
+  </p>
+  <button onclick="closeOverlay()" style="margin-top:1.5rem;background:transparent;border:1px solid #555;color:#aaa;padding:0.5rem 1.2rem;border-radius:6px;cursor:pointer;">
+    Close
+  </button>
+</div>
+
+<script>
+// Particles
+const pCont = document.getElementById('particles');
+for (let i = 0; i < 40; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = Math.random() * 100 + '%';
+  p.style.animationDelay = Math.random() * 12 + 's';
+  p.style.animationDuration = (8 + Math.random() * 8) + 's';
+  pCont.appendChild(p);
+}
+
+// Loading
+const pbar = document.getElementById('pbar');
+const pct = document.getElementById('pct');
+let progress = 0;
+const loadInterval = setInterval(() => {
+  progress += Math.random() * 4 + 1;
+  if (progress >= 100) {
+    progress = 100;
+    clearInterval(loadInterval);
+    setTimeout(() => {
+      document.getElementById('loader').classList.add('hide');
+      document.getElementById('main').style.display = 'block';
+    }, 400);
+  }
+  pbar.style.width = progress + '%';
+  pct.textContent = Math.floor(progress) + '%';
+}, 80);
+
+// Items data (ITEMS)
+const items = [
+  { name: "Heartblade", rarity: "Godly", cat: "godly", emoji: "❤️‍🔥" },
+  { name: "Darksword", rarity: "Godly", cat: "godly", emoji: "⚔️" },
+  { name: "Evergreen", rarity: "Godly", cat: "godly", emoji: "🌲" },
+  { name: "Traveler's Gun", rarity: "Godly", cat: "godly", emoji: "🔫" },
+  { name: "Nik's Scythe", rarity: "Ancient", cat: "ancient", emoji: "🗡️" },
+  { name: "Harvester", rarity: "Ancient", cat: "ancient", emoji: "🌾" },
+  { name: "Batwing", rarity: "Ancient", cat: "ancient", emoji: "🦇" },
+  { name: "Elderwood Scythe", rarity: "Ancient", cat: "ancient", emoji: "🪵" },
+  { name: "Chroma Darkbringer", rarity: "Chroma", cat: "chroma", emoji: "🌈" },
+  { name: "Chroma Lightbringer", rarity: "Chroma", cat: "chroma", emoji: "✨" },
+  { name: "Chroma Evergun", rarity: "Chroma", cat: "chroma", emoji: "🔫" },
+  { name: "Chroma Fang", rarity: "Chroma", cat: "chroma", emoji: "🦷" },
+  { name: "Seer", rarity: "Vintage", cat: "vintage", emoji: "👁️" },
+  { name: "Cookiecane", rarity: "Vintage", cat: "vintage", emoji: "🍪" },
+  { name: "Corrupt", rarity: "Unique", cat: "unique", emoji: "🖤" },
+  { name: "Celestial Set", rarity: "Sets", cat: "sets", emoji: "🌌" },
+  { name: "Vampire Set", rarity: "Sets", cat: "sets", emoji: "🧛" },
+];
+
+const grid = document.getElementById('grid');
+function render(filter = 'all') {
+  grid.innerHTML = '';
+  items.filter(i => filter === 'all' || i.cat === filter).forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-art">${item.emoji}</div>
+      <div class="card-body">
+        <div class="card-name">${item.name}</div>
+        <div class="card-meta">
+          <span class="rarity \( {item.cat}"> \){item.rarity}</span>
+          · ${item.cat.charAt(0).toUpperCase() + item.cat.slice(1)}
+        </div>
+        <button class="view-btn">View Item</button>
+      </div>`;
+    card.querySelector('.view-btn').onclick = (e) => {
+      e.stopPropagation();
+      selectItem(item);
+    };
+    card.onclick = () => selectItem(item);
+    grid.appendChild(card);
+  });
+}
+render();
+
+// Category filter
+document.querySelectorAll('.cat-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render(btn.dataset.cat);
+  };
+});
+
+// Selection animation
+function selectItem(item) {
+  const ov = document.getElementById('overlay');
+  const ovName = document.getElementById('ovName');
+  const ovBar = document.getElementById('ovBar');
+  const ovStatus = document.getElementById('ovStatus');
+  const ovMsg = document.getElementById('ovMsg');
+  const ovBtn = document.getElementById('ovBtn');
+  const ovWarn = document.getElementById('ovWarn');
+
+  ovName.textContent = item.name;
+  ovBar.style.width = '0%';
+  ovStatus.style.display = 'block';
+  ovStatus.textContent = 'Loading showcase preview…';
+  ovMsg.style.display = 'none';
+  ovBtn.style.display = 'none';
+  ovWarn.style.display = 'none';
+  ov.classList.add('show');
+
+  let p = 0;
+  const iv = setInterval(() => {
+    p += Math.random() * 8 + 3;
+    if (p >= 100) {
+      p = 100;
+      clearInterval(iv);
+      ovStatus.style.display = 'none';
+      ovMsg.style.display = 'block';
+      ovBtn.style.display = 'inline-block';
+      ovWarn.style.display = 'block';
+    }
+    ovBar.style.width = p + '%';
+  }, 120);
+}
+
+function closeOverlay() {
+  document.getElementById('overlay').classList.remove('show');
+}
+</script>
+</body>
+</html>
